@@ -1,0 +1,5 @@
+/myenv
+/src/__pycache__
+/src/node_modules
+/REPO
+.env

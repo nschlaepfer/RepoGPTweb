@@ -1,0 +1,9 @@
+openai
+gitpython
+flask
+python-dotenv
+pinecone-io
+beautifulsoup4
+slimit
+tqdm
+libcst

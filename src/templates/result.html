@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Repository Analyzer</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Analysis Result</h1>
+    <div class="result-box">
+        <pre>{{ result_text }}</pre>
+    </div>
+    <a href="{{ url_for('download_files') }}" class="btn download-link">Download Generated Files</a>
+    <a href="/" class="btn">Back to Home</a>
+</body>
+</html>

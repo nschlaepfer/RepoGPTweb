@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GitHub Repository Analyzer</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script>
+            function showPineconeSettings() {
+                var dropdown = document.getElementById("user_choice");
+                var pineconeSettings = document.getElementById("pineconeSettings");
+                var openaiAPIKeyInput = document.getElementById("openai_api_key");
+                var resultBox = document.getElementById("result_box");
+
+                if (dropdown.value === "1" || dropdown.value === "3") {
+                    pineconeSettings.style.display = "block";
+                } else {
+                    pineconeSettings.style.display = "none";
+                }
+
+                if (dropdown.value === "2" || dropdown.value === "3") {
+                    openaiAPIKeyInput.style.display = "block";
+                } else {
+                    openaiAPIKeyInput.style.display = "none";
+                }
+
+                // Clear the result box when changing the operation
+                resultBox.innerHTML = "";
+            }
+
+            // Function to load stored API keys
+            function loadAPIKeys() {
+                var pineconeApiKey = localStorage.getItem('pineconeApiKey');
+                var openaiApiKey = localStorage.getItem('openaiApiKey');
+
+                if (pineconeApiKey) {
+                    document.getElementById('pinecone_api_key').value = pineconeApiKey;
+                }
+
+                if (openaiApiKey) {
+                    document.getElementById('openai_api_key').value = openaiApiKey;
+                }
+            }
+
+            // Function to store API keys
+            function storeAPIKeys() {
+                var pineconeApiKey = document.getElementById('pinecone_api_key').value;
+                var openaiApiKey = document.getElementById('openai_api_key').value;
+
+                localStorage.setItem('pineconeApiKey', pineconeApiKey);
+                localStorage.setItem('openaiApiKey', openaiApiKey);
+            }
+
+            window.onload = loadAPIKeys;
+        </script>
+        <style>
+            #result_box {
+                width: 100%;
+                height: 400px;
+                padding: 10px;
+                margin-top: 20px;
+                font-family: monospace;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                overflow-y: auto;
+            }
+            #loading {
+                display: none;
+                margin-left: 10px;
+                font-size: 20px;
+                animation: blink 1s linear infinite;
+            }
+
+            @keyframes blink {
+                0% { opacity: 0; }
+                50% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="container">
+            <h1 class="my-4">Welcome to the GitHub Repository Analyzer!</h1>
+            <form method="POST" onsubmit="storeAPIKeys()">
+                <div class="form-group">
+                    <label for="repo_link">Please enter the link to the GitHub repo you want to analyze:</label>
+                    <input type="text" class="form-control" id="repo_link" name="repo_link" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_choice">Select an operation:</label>
+                    <select class="form-control" id="user_choice" name="user_choice" required onchange="showPineconeSettings()">
+                        <option value="2">Comment all files, create README, and a file structure guide</option>
+                        <option value="1">Convert the code into embeddings and upload to Pinecone</option>
+                        <option value="3">Perform both operations</option>
+                    </select>
+                </div>
+
+                <div id="pineconeSettings" style="display: none;">
+                    <div class="form-group">
+                        <label for="pinecone_api_key">Pinecone API Key:</label>
+                        <input type="text" class="form-control" id="pinecone_api_key" name="pinecone_api_key">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="openai_api_key">OpenAI API Key:</label>
+                    <input type="text" class="form-control" id="openai_api_key" name="openai_api_key">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <div id="loading">Loading...</div>
+            </form>
+    
+            <div id="result_box"></div>
+            <a id="download_link" href="/download" style="display: none;">Download Files</a>
+        </div>
+    
+        <script>
+            document.querySelector("form").addEventListener("submit", function(event) {
+                event.preventDefault();
+        
+                var repoLink = document.getElementById("repo_link").value;
+                var userChoice = document.getElementById("user_choice").value;
+                var pineconeApiKey = document.getElementById("pinecone_api_key").value;
+                var openaiApiKey = document.getElementById("openai_api_key").value;
+        
+                var resultBox = document.getElementById("result_box");
+                var loadingText = document.getElementById("loading");
+
+                resultBox.innerHTML = "<h2>Analyzing Repo...</h2>"; // Initial status message
+                loadingText.style.display = "block"; // Show the loading text
+        
+                fetch("/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        repoLink: repoLink,
+                        userChoice: userChoice,
+                        pineconeApiKey: pineconeApiKey,
+                        openaiApiKey: openaiApiKey
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadingText.style.display = "none"; // Hide the loading text
+                    resultBox.innerHTML += "<h2>Result:</h2> <p>" + data.result + "</p>";
+                    if (data.readme_files) {
+                        resultBox.innerHTML += "<h2>README Files:</h2> <ul>";
+                        data.readme_files.forEach(file => {
+                            resultBox.innerHTML += "<li>" + file + "</li>";
+                        });
+                        resultBox.innerHTML += "</ul>";
+                    }
+                    if (data.comments) {
+                        resultBox.innerHTML += "<h2>Comments:</h2> <p>" + data.comments.join("\n") + "</p>";
+                    }
+                    document.getElementById("download_link").style.display = "block";
+                })
+                .catch(error => {
+                    loadingText.style.display = "none"; // Hide the loading text
+                    resultBox.innerHTML = "<h2>An error occurred:</h2> <p>" + error.message + "</p>";
+                });
+            });
+        </script>
+        
+    </body>
+    
+</html>
