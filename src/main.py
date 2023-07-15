@@ -38,6 +38,7 @@ def home():
                 result_text += "Embeddings generated and uploaded to Pinecone.\n"
 
             readme_files = []
+            file_names = []  # New list to hold file names
             if user_choice in ['2', '3']:
                 for subdir, dirs, files in os.walk(directory):
                     for file in files:
@@ -46,6 +47,7 @@ def home():
                             try:
                                 readme_path = process_file_with_openai(filepath, "3.5-turbo-16k")
                                 readme_files.append(readme_path)
+                                file_names.append(filepath)  # Add the file name to the list
                             except UnicodeDecodeError:
                                 return jsonify({"error": f'Error processing file: {filepath}'})
 
@@ -56,7 +58,7 @@ def home():
             shutil.make_archive(zip_file_path, 'zip', directory)
             print(f"Zip file created at {zip_file_path}.zip")
 
-            return jsonify({'result': result_text, 'readme_files': readme_files})
+            return jsonify({'result': result_text, 'readme_files': readme_files, 'file_names': file_names})  # Include file names in the response
         except Exception as e:
             return jsonify({"error": str(e)})
 
@@ -67,9 +69,9 @@ def download_files():
     directory = app.root_path  # Use Flask's root path
     filename = 'processed_files.zip'
     file_path = os.path.join(directory, filename)
+    print(f"Attempting to download file at {file_path}")
     print(f"Directory: {directory}")
     print(f"Files in directory: {os.listdir(directory)}")
-    print(f"Attempting to download file at {file_path}")
     if os.path.exists(file_path):
         return send_from_directory(directory, filename, as_attachment=True)
     else:
@@ -94,6 +96,7 @@ def analyze():
             result_text += "Embeddings generated and uploaded to Pinecone.\n"
 
         readme_files = []
+        file_names = []  # New list to hold file names
         if user_choice in ['2', '3']:
             for subdir, dirs, files in os.walk(directory):
                 for file in files:
@@ -102,12 +105,13 @@ def analyze():
                         try:
                             readme_path, comments = process_file_with_openai(filepath, "3.5-turbo-16k")
                             readme_files.append(readme_path)
+                            file_names.append(filepath)  # Add the file name to the list
                         except UnicodeDecodeError:
                             return jsonify({"error": f'Error processing file: {filepath}'})
 
             result_text += "Files processed and commented.\n"
 
-        return jsonify({'result': result_text, 'readme_files': readme_files, 'comments': comments})
+        return jsonify({'result': result_text, 'readme_files': readme_files, 'comments': comments, 'file_names': file_names})  # Include file names in the response
     except Exception as e:
         return jsonify({"error": str(e)})
 
