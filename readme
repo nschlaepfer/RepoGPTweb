@@ -1,0 +1,15 @@
+Enter python env.
+
+pip install -r requirements.txt
+
+Run main.py, go to the url in the terminal.
+
+Enter URL of repo
+
+Enter API key, API key will be saved in local broswer cache.
+
+Repo will bein analyzed, and the result will be shown in the browser.
+
+Repo will be in root directory, named by repo name.
+
+
