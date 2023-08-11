@@ -1,5 +1,5 @@
 # src/user_interface.py
-#DUMMY UI
+#DUMMY UI OLD CODE - NOT USED IN FINAL VERSION
 
 import re
 import threading
