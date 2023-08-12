@@ -1,4 +1,4 @@
-#code_processing.py
+# This file contains functions for processing code using OpenAI's GPT model. code_processing.py
 import openai
 import os
 from dotenv import load_dotenv
@@ -18,25 +18,16 @@ MAX_RETRIES = 3
 RETRY_DELAY = 5  # in seconds
 
 # code_processing.py
-def split_code_into_chunks(code, max_tokens=1000):
-    """
-    Splits code into chunks of specified size.
-
-    Args:
-        code (str): The code to split.
-        max_tokens (int): The maximum number of tokens in each chunk.
-
-    Returns:
-        A list of code chunks.
-    """
-    tokens = code.split()
+def split_code_into_chunks(code, max_lines=200): # Adjust this as needed
+    lines = code.split('\n')
     chunks = []
 
-    for i in range(0, len(tokens), max_tokens):
-        chunk = " ".join(tokens[i:i + max_tokens])
+    for i in range(0, len(lines), max_lines):
+        chunk = "\n".join(lines[i:i + max_lines])
         chunks.append(chunk)
 
     return chunks
+
 
 def process_file_with_openai(filepath, gpt_version):
     """

@@ -154,6 +154,11 @@
                         });
                         resultBox.innerHTML += "</ul>";
                     }
+                    if (data.zip_url) { // Assuming the ZIP URL is sent under the key "zip_url"
+                        var downloadLink = document.getElementById("download_link");
+                        downloadLink.href = data.zip_url; // Set the URL to the ZIP file
+                        downloadLink.style.display = "block"; // Show the download link
+                    }
                     if (data.comments) {
                         resultBox.innerHTML += "<h2>Comments:</h2> <p>" + data.comments.join("\n") + "</p>";
                     }

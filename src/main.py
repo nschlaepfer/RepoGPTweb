@@ -55,8 +55,10 @@ def home():
             result_text += "Files processed and commented.\n"
 
             # Create a zip file of the processed files
-            zip_file_path = os.path.join(app.root_path, "processed_files")
-            shutil.make_archive(zip_file_path, 'zip', directory)
+            # Create a zip file of the processed files
+            zip_file_name = 'processed_files.zip'
+            zip_file_path = os.path.join(app.root_path, zip_file_name)  # define the path where the zip file will be saved
+            shutil.make_archive(zip_file_path, 'zip', directory) # include directory path for zipping
             print(f"Zip file created at {zip_file_path}.zip")
 
             return jsonify({'result': result_text, 'readme_files': readme_files, 'file_names': file_names})  # Include file names in the response
@@ -69,12 +71,12 @@ def home():
 def download_files():
     directory = app.root_path  # Use Flask's root path
     filename = 'processed_files.zip'
-    file_path = os.path.join(directory, filename)
+    file_path = os.path.join(directory, filename + '.zip') # include the .zip extension in file_path
     print(f"Attempting to download file at {file_path}")
     print(f"Directory: {directory}")
     print(f"Files in directory: {os.listdir(directory)}")
     if os.path.exists(file_path):
-        return send_from_directory(directory, filename, as_attachment=True)
+        return send_from_directory(directory, filename + '.zip', as_attachment=True) # include the .zip extension in filename
     else:
         return "File not found", 404
 
