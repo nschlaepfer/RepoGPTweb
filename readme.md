@@ -1,5 +1,7 @@
-
 # RepoGPT 🚀
+<img width="864" alt="Screenshot 2023-08-11 at 5 35 46 PM" src="https://github.com/nschlaepfer/fixedRepoGPT/assets/44988633/3b293ca8-5174-479a-9aa4-77a9089d6592">
+
+
 
 ## 📌 Overview
 **RepoGPT** is an evolving web application crafted to empower users with a swift and comprehensive understanding of a GitHub repository. By harnessing the power of **OpenAI** and **Pinecone**, it delves deep into the code, crafts embeddings, and offers invaluable insights into the repository's architecture and functionality. Users are endowed with a downloadable ZIP file of the scrutinized repository, enriched with a companion guide that elucidates the project's essence and proffers enhancement suggestions.
